@@ -98,7 +98,7 @@
     root: '/',
     scheme: 'Mist',
     version: '5.1.3',
-    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
     fancybox: true,
     tabs: true,
     motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
@@ -345,7 +345,30 @@
       
         
           
-            
+            <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>cgroups–control groups，把任务(进程、线程)放到一个组里面同意加以控制，可以限制、记录任务组所使用的物理资源（CPU、Memory、IO），是构建虚拟化管理工具的基石。</p>
+<h2 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h2><ul>
+<li>资源限制：对人物使用的资源总额进行限制。设定应用使用内存的上线。</li>
+<li>优先级分配：通过分配CPU时间片数量及磁盘IO带宽大小，控制任务运行优先级。</li>
+<li>资源统计：统计系统的资源使用量，如CPU使用时长，内存用量；适用于计费。</li>
+<li>任务控制：对任务执行挂起、恢复等操作。</li>
+</ul>
+<h2 id="术语"><a href="#术语" class="headerlink" title="术语"></a>术语</h2><ul>
+<li>task任务：进程、线程</li>
+<li>cgroup控制组：按照某种资源控制标准而划分的任务组，包含一个或多个子系统</li>
+<li>subsystem子系统：一个资源调度控制器。如CPU子系统控制CPU时间分配，内存子系统限制内存使用量</li>
+<li>hierarchy层级：层级由一系列cgroup树状结构排列而成，每个层级通过绑定对应子系统进行资源控制</li>
+</ul>
+<h2 id="子系统"><a href="#子系统" class="headerlink" title="子系统"></a>子系统</h2><ul>
+<li>cpu:控制任务对CPU的使用</li>
+<li>cpuacct:生成任务对CPU资源使用情况报告</li>
+<li>cpuset:为任务分配独立的CPU（多处理器）和内存</li>
+<li>memory:设定任务对内存使用量的限定，并生产使用报告</li>
+<li>devices:开启或关闭任务对设备的访问</li>
+<li>ferrzer:挂起或恢复任务</li>
+<li>blkio:为块设备设定输入、输出限制</li>
+</ul>
+<h2 id="查看子系统"><a href="#查看子系统" class="headerlink" title="查看子系统"></a>查看子系统</h2><p>cgroup的实现是文件系统，所以需要mount。<br><img src="/2017/12/03/《Docker-容器与容器云》读书笔记-cgroups资源限制/1.PNG" alt=""></p>
+
           
         
       
