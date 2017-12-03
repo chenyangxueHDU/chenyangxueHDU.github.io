@@ -79,17 +79,17 @@
 
 
 
-<meta name="description" content="如何实现一个资源隔离的容器？首先隔离文件系统；接着为了通信，容器必须有独立的IP、端口、路由等，也就是隔离网络；容器需要一个独立的主机名以便在网络中标识自己，隔离主机名和域名；进程间通信IPC也需要隔离；权限也需要隔离；最后需要有自己的PID。 linux提供了6种隔离机制。    namespace 隔离内容    ">
+<meta name="description" content="引言如何实现一个资源隔离的容器？首先隔离文件系统；接着为了通信，容器必须有独立的IP、端口、路由等，也就是隔离网络；容器需要一个独立的主机名以便在网络中标识自己，隔离主机名和域名；进程间通信IPC也需要隔离；权限也需要隔离；最后需要有自己的PID。 linux提供了6种隔离机制。    namespace 系统调用参数">
 <meta property="og:type" content="article">
 <meta property="og:title" content="《Docker 容器与容器云》读书笔记--namespace资源隔离">
 <meta property="og:url" content="http://yoursite.com/2017/12/03/《Docker 容器与容器云》读书笔记--namespace资源隔离/index.html">
 <meta property="og:site_name" content="chenyangxue">
-<meta property="og:description" content="如何实现一个资源隔离的容器？首先隔离文件系统；接着为了通信，容器必须有独立的IP、端口、路由等，也就是隔离网络；容器需要一个独立的主机名以便在网络中标识自己，隔离主机名和域名；进程间通信IPC也需要隔离；权限也需要隔离；最后需要有自己的PID。 linux提供了6种隔离机制。    namespace 隔离内容     UTS 主机名与域名   IPC 信号量、消息队列和共享内存   PID 进程">
+<meta property="og:description" content="引言如何实现一个资源隔离的容器？首先隔离文件系统；接着为了通信，容器必须有独立的IP、端口、路由等，也就是隔离网络；容器需要一个独立的主机名以便在网络中标识自己，隔离主机名和域名；进程间通信IPC也需要隔离；权限也需要隔离；最后需要有自己的PID。 linux提供了6种隔离机制。    namespace 系统调用参数 隔离内容     UTS CLONE_NEWUTS 主机名与域名   IPC">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-12-03T08:43:44.016Z">
+<meta property="og:updated_time" content="2017-12-03T13:05:25.004Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="《Docker 容器与容器云》读书笔记--namespace资源隔离">
-<meta name="twitter:description" content="如何实现一个资源隔离的容器？首先隔离文件系统；接着为了通信，容器必须有独立的IP、端口、路由等，也就是隔离网络；容器需要一个独立的主机名以便在网络中标识自己，隔离主机名和域名；进程间通信IPC也需要隔离；权限也需要隔离；最后需要有自己的PID。 linux提供了6种隔离机制。    namespace 隔离内容     UTS 主机名与域名   IPC 信号量、消息队列和共享内存   PID 进程">
+<meta name="twitter:description" content="引言如何实现一个资源隔离的容器？首先隔离文件系统；接着为了通信，容器必须有独立的IP、端口、路由等，也就是隔离网络；容器需要一个独立的主机名以便在网络中标识自己，隔离主机名和域名；进程间通信IPC也需要隔离；权限也需要隔离；最后需要有自己的PID。 linux提供了6种隔离机制。    namespace 系统调用参数 隔离内容     UTS CLONE_NEWUTS 主机名与域名   IPC">
 
 
 
@@ -341,42 +341,62 @@
       
 
       
-        <p>如何实现一个资源隔离的容器？首先隔离文件系统；接着为了通信，容器必须有独立的IP、端口、路由等，也就是隔离网络；容器需要一个独立的主机名以便在网络中标识自己，隔离主机名和域名；进程间通信IPC也需要隔离；权限也需要隔离；最后需要有自己的PID。</p>
+        <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>如何实现一个资源隔离的容器？首先隔离文件系统；接着为了通信，容器必须有独立的IP、端口、路由等，也就是隔离网络；容器需要一个独立的主机名以便在网络中标识自己，隔离主机名和域名；进程间通信IPC也需要隔离；权限也需要隔离；最后需要有自己的PID。</p>
 <p>linux提供了6种隔离机制。</p>
 <table>
 <thead>
 <tr>
 <th style="text-align:left">namespace</th>
+<th style="text-align:left">系统调用参数</th>
 <th style="text-align:left">隔离内容</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align:left">UTS</td>
+<td style="text-align:left">CLONE_NEWUTS</td>
 <td style="text-align:left">主机名与域名</td>
 </tr>
 <tr>
 <td style="text-align:left">IPC</td>
+<td style="text-align:left">CLONE_NEWIPC</td>
 <td style="text-align:left">信号量、消息队列和共享内存</td>
 </tr>
 <tr>
 <td style="text-align:left">PID</td>
+<td style="text-align:left">CLONE_NEWPID</td>
 <td style="text-align:left">进程编号</td>
 </tr>
 <tr>
 <td style="text-align:left">Network</td>
+<td style="text-align:left">CLONE_NEWNET</td>
 <td style="text-align:left">网络设备、网络栈、端口等</td>
 </tr>
 <tr>
 <td style="text-align:left">Mount</td>
+<td style="text-align:left">CLONE_NEWNS</td>
 <td style="text-align:left">挂载点（文件系统）</td>
 </tr>
 <tr>
 <td style="text-align:left">User</td>
+<td style="text-align:left">CLONE_NEWUSER</td>
 <td style="text-align:left">用户和用户组</td>
 </tr>
 </tbody>
 </table>
+<h2 id="namespace-API"><a href="#namespace-API" class="headerlink" title="namespace API"></a>namespace API</h2><h3 id="clone"><a href="#clone" class="headerlink" title="clone()"></a>clone()</h3><p>创建新进程和namespace</p>
+<h3 id="setns"><a href="#setns" class="headerlink" title="setns()"></a>setns()</h3><p>加入一个已经存在的namespace</p>
+<h3 id="unshare"><a href="#unshare" class="headerlink" title="unshare()"></a>unshare()</h3><p>在原先进程上进行namespace隔离；目前Docker暂未使用该系统调用。</p>
+<h2 id="PID-namespace"><a href="#PID-namespace" class="headerlink" title="PID namespace"></a>PID namespace</h2><p>对PID重新编号，即不同namespace下的进程可以有相同的PID。内核为PID namespace维护了一个树状结构，顶层是系统初始化创建的，root namespace。它创建的新PID namespace是child namespace。父节点可以看到子节点中的进程，并通过信号等IPC方式对子节点中的进程产生影响；反之不可以。</p>
+<h3 id="init进程"><a href="#init进程" class="headerlink" title="init进程"></a>init进程</h3><p>PID为1的进程是init，负责处理“孤儿”子进程（因父进程错误），回收资源结束进程。PID namespace维护树状结构是为了有利于系统的资源监控和回收。</p>
+<h3 id="信号屏蔽"><a href="#信号屏蔽" class="headerlink" title="信号屏蔽"></a>信号屏蔽</h3><p>为了防止init进程被误伤，init进程会对同一PID namespace下的进程发送的信号进行屏蔽。<br>如果父节点PID namespace对子节点发送SIGKILL和SIGSTOP信号，那么子节点init会强制执行。一旦init进程被销毁，那么同一PID namespace下的其他进程都会收到SIGKILL。</p>
+<h2 id="mount-namespace"><a href="#mount-namespace" class="headerlink" title="mount namespace"></a>mount namespace</h2><p>通过隔离文件系统挂载点对隔离文件系统提供支持，是第一个linux namespace，所以标识位很特殊——CLONE_NEWNS。创建mount namespace时，会复制当前文件结构给新的namespace。</p>
+<h3 id="挂载关系"><a href="#挂载关系" class="headerlink" title="挂载关系"></a>挂载关系</h3><ul>
+<li>共享关系: 如果两个挂载对象具有共享关系，那么一个挂在对象中的挂在时间会传播到另一个挂在对象，反之亦然。各个namespace之间的目录相互影响。</li>
+<li>从属关系: 只有从属对象接受挂在事件。mount namespace中的目录发生变化，child namespace会受到影响；child namespace目录发生变化，mount namespace不会受到影响。</li>
+<li>私有关系: 各个namespace完全隔离。</li>
+<li>不可绑定挂载： 不允许其他mount namespace挂挂载。 </li>
+</ul>
 
       
     </div>
@@ -461,8 +481,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -515,6 +544,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#namespace-API"><span class="nav-number">2.</span> <span class="nav-text">namespace API</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#clone"><span class="nav-number">2.1.</span> <span class="nav-text">clone()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#setns"><span class="nav-number">2.2.</span> <span class="nav-text">setns()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#unshare"><span class="nav-number">2.3.</span> <span class="nav-text">unshare()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PID-namespace"><span class="nav-number">3.</span> <span class="nav-text">PID namespace</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#init进程"><span class="nav-number">3.1.</span> <span class="nav-text">init进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#信号屏蔽"><span class="nav-number">3.2.</span> <span class="nav-text">信号屏蔽</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mount-namespace"><span class="nav-number">4.</span> <span class="nav-text">mount namespace</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#挂载关系"><span class="nav-number">4.1.</span> <span class="nav-text">挂载关系</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
