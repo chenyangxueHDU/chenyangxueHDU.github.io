@@ -79,17 +79,17 @@
 
 
 
-<meta name="description" content="Docker (1)Testing (1)">
-<meta property="og:type" content="website">
-<meta property="og:title" content="目前共计2个分类">
-<meta property="og:url" content="http://yoursite.com/categories/index.html">
+<meta name="description" content="如何实现一个资源隔离的容器？首先隔离文件系统；接着为了通信，容器必须有独立的IP、端口、路由等，也就是隔离网络；容器需要一个独立的主机名以便在网络中标识自己，隔离主机名和域名；进程间通信IPC也需要隔离；权限也需要隔离；最后需要有自己的PID。 linux提供了6种隔离机制。    namespace 隔离内容    ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《Docker 容器与容器云》读书笔记--namespace资源隔离">
+<meta property="og:url" content="http://yoursite.com/2017/12/03/《Docker 容器与容器云》读书笔记--namespace资源隔离/index.html">
 <meta property="og:site_name" content="chenyangxue">
-<meta property="og:description" content="Docker (1)Testing (1)">
+<meta property="og:description" content="如何实现一个资源隔离的容器？首先隔离文件系统；接着为了通信，容器必须有独立的IP、端口、路由等，也就是隔离网络；容器需要一个独立的主机名以便在网络中标识自己，隔离主机名和域名；进程间通信IPC也需要隔离；权限也需要隔离；最后需要有自己的PID。 linux提供了6种隔离机制。    namespace 隔离内容     UTS 主机名与域名   IPC 信号量、消息队列和共享内存   PID 进程">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-12-03T08:11:20.275Z">
+<meta property="og:updated_time" content="2017-12-03T08:43:44.016Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="目前共计2个分类">
-<meta name="twitter:description" content="Docker (1)Testing (1)">
+<meta name="twitter:title" content="《Docker 容器与容器云》读书笔记--namespace资源隔离">
+<meta name="twitter:description" content="如何实现一个资源隔离的容器？首先隔离文件系统；接着为了通信，容器必须有独立的IP、端口、路由等，也就是隔离网络；容器需要一个独立的主机名以便在网络中标识自己，隔离主机名和域名；进程间通信IPC也需要隔离；权限也需要隔离；最后需要有自己的PID。 linux提供了6种隔离机制。    namespace 隔离内容     UTS 主机名与域名   IPC 信号量、消息队列和共享内存   PID 进程">
 
 
 
@@ -119,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/categories/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/12/03/《Docker 容器与容器云》读书笔记--namespace资源隔离/"/>
 
 
 
 
 
-  <title>目前共计2个分类 | chenyangxue</title>
+  <title>《Docker 容器与容器云》读书笔记--namespace资源隔离 | chenyangxue</title>
   
 
 
@@ -240,34 +240,195 @@
 
   <div id="posts" class="posts-expand">
     
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/03/《Docker 容器与容器云》读书笔记--namespace资源隔离/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Chen Yangxue">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="chenyangxue">
+    </span>
+
     
-    
-    <div class="post-block page">
       <header class="post-header">
 
-	<h1 class="post-title" itemprop="name headline">目前共计2个分类</h1>
-
-
-
-</header>
-
-      
-      
-      
-      <div class="post-body">
         
         
-          <p><a href="Docker/">Docker</a> (1)<br><a href="Testing/">Testing</a> (1)</p>
-
+          <h1 class="post-title" itemprop="name headline">《Docker 容器与容器云》读书笔记--namespace资源隔离</h1>
         
-      </div>
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-03T16:09:53+08:00">
+                2017-12-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Docker/" itemprop="url" rel="index">
+                    <span itemprop="name">Docker</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
       
+
+      
+        <p>如何实现一个资源隔离的容器？首先隔离文件系统；接着为了通信，容器必须有独立的IP、端口、路由等，也就是隔离网络；容器需要一个独立的主机名以便在网络中标识自己，隔离主机名和域名；进程间通信IPC也需要隔离；权限也需要隔离；最后需要有自己的PID。</p>
+<p>linux提供了6种隔离机制。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">namespace</th>
+<th style="text-align:left">隔离内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">UTS</td>
+<td style="text-align:left">主机名与域名</td>
+</tr>
+<tr>
+<td style="text-align:left">IPC</td>
+<td style="text-align:left">信号量、消息队列和共享内存</td>
+</tr>
+<tr>
+<td style="text-align:left">PID</td>
+<td style="text-align:left">进程编号</td>
+</tr>
+<tr>
+<td style="text-align:left">Network</td>
+<td style="text-align:left">网络设备、网络栈、端口等</td>
+</tr>
+<tr>
+<td style="text-align:left">Mount</td>
+<td style="text-align:left">挂载点（文件系统）</td>
+</tr>
+<tr>
+<td style="text-align:left">User</td>
+<td style="text-align:left">用户和用户组</td>
+</tr>
+</tbody>
+</table>
+
       
     </div>
     
     
     
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/03/Hello-hexo/" rel="next" title="Hello hexo">
+                <i class="fa fa-chevron-left"></i> Hello hexo
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
   </div>
 
 
