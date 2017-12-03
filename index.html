@@ -359,15 +359,15 @@
 <li>hierarchy层级：层级由一系列cgroup树状结构排列而成，每个层级通过绑定对应子系统进行资源控制</li>
 </ul>
 <h2 id="子系统"><a href="#子系统" class="headerlink" title="子系统"></a>子系统</h2><ul>
-<li>cpu:控制任务对CPU的使用</li>
-<li>cpuacct:生成任务对CPU资源使用情况报告</li>
-<li>cpuset:为任务分配独立的CPU（多处理器）和内存</li>
-<li>memory:设定任务对内存使用量的限定，并生产使用报告</li>
-<li>devices:开启或关闭任务对设备的访问</li>
-<li>ferrzer:挂起或恢复任务</li>
-<li>blkio:为块设备设定输入、输出限制</li>
+<li>cpu：控制任务对CPU的使用</li>
+<li>cpuacct：生成任务对CPU资源使用情况报告</li>
+<li>cpuset：为任务分配独立的CPU（多处理器）和内存</li>
+<li>memory：设定任务对内存使用量的限定，并生产使用报告</li>
+<li>devices：开启或关闭任务对设备的访问</li>
+<li>ferrzer：挂起或恢复任务</li>
+<li>blkio：为块设备设定输入、输出限制</li>
 </ul>
-<h2 id="查看子系统"><a href="#查看子系统" class="headerlink" title="查看子系统"></a>查看子系统</h2><p>cgroup的实现是文件系统，所以需要mount。<br><img src="/2017/12/03/《Docker-容器与容器云》读书笔记-cgroups资源限制/1.PNG" alt=""></p>
+<h2 id="查看子系统"><a href="#查看子系统" class="headerlink" title="查看子系统"></a>查看子系统</h2><p>cgroup的实现是文件系统，所以需要mount。<br><img src="/2017/12/03/《Docker-容器与容器云》读书笔记-cgroups资源限制/1.PNG" alt=""><br>查看cpu子系统下的控制组<br><img src="/2017/12/03/《Docker-容器与容器云》读书笔记-cgroups资源限制/2.PNG" alt=""><br>看到Docker会在每个子系统的控制组目录下创建一个名为docker的控制组，并且在docker控制组里再为每个容器创建一个以容器ID为名称的容器控制组。<br><img src="/2017/12/03/《Docker-容器与容器云》读书笔记-cgroups资源限制/3.PNG" alt=""><br>容器中所有的进程PID都会写入该控制组的tasks文件中。</p>
 
           
         
