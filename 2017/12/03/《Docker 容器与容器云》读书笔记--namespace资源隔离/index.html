@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="chenyangxue">
 <meta property="og:description" content="引言如何实现一个资源隔离的容器？首先隔离文件系统；接着为了通信，容器必须有独立的IP、端口、路由等，也就是隔离网络；容器需要一个独立的主机名以便在网络中标识自己，隔离主机名和域名；进程间通信IPC也需要隔离；权限也需要隔离；最后需要有自己的PID。 linux提供了6种隔离机制。    namespace 系统调用参数 隔离内容     UTS CLONE_NEWUTS 主机名与域名   IPC">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-12-03T13:05:25.004Z">
+<meta property="og:updated_time" content="2017-12-03T14:10:14.952Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="《Docker 容器与容器云》读书笔记--namespace资源隔离">
 <meta name="twitter:description" content="引言如何实现一个资源隔离的容器？首先隔离文件系统；接着为了通信，容器必须有独立的IP、端口、路由等，也就是隔离网络；容器需要一个独立的主机名以便在网络中标识自己，隔离主机名和域名；进程间通信IPC也需要隔离；权限也需要隔离；最后需要有自己的PID。 linux提供了6种隔离机制。    namespace 系统调用参数 隔离内容     UTS CLONE_NEWUTS 主机名与域名   IPC">
@@ -397,6 +397,7 @@
 <li>私有关系: 各个namespace完全隔离。</li>
 <li>不可绑定挂载： 不允许其他mount namespace挂挂载。 </li>
 </ul>
+<h2 id="network-namespace"><a href="#network-namespace" class="headerlink" title="network namespace"></a>network namespace</h2><p>一个物理的网络设备最多存在于一个namespace中，通过穿件veth pair(虚拟网络设备对：有两端，类似管道，如果数据从一端传入另一端也可以接收到，反之亦然)在不同的network namespace之间创建通道，以达到通信目的。<br>在veth pair创建完成之前，docker daemon通过pipe与容器的init进程通信。</p>
 
       
     </div>
@@ -417,6 +418,22 @@
       
       
 
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/03/《Docker-容器与容器云》读书笔记-cgroups资源限制/" rel="prev" title="《Docker 容器与容器云》读书笔记--cgroups资源限制">
+                《Docker 容器与容器云》读书笔记--cgroups资源限制 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
       
 
       
@@ -490,7 +507,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-count">2</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -538,7 +555,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#namespace-API"><span class="nav-number">2.</span> <span class="nav-text">namespace API</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#clone"><span class="nav-number">2.1.</span> <span class="nav-text">clone()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#setns"><span class="nav-number">2.2.</span> <span class="nav-text">setns()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#unshare"><span class="nav-number">2.3.</span> <span class="nav-text">unshare()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PID-namespace"><span class="nav-number">3.</span> <span class="nav-text">PID namespace</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#init进程"><span class="nav-number">3.1.</span> <span class="nav-text">init进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#信号屏蔽"><span class="nav-number">3.2.</span> <span class="nav-text">信号屏蔽</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mount-namespace"><span class="nav-number">4.</span> <span class="nav-text">mount namespace</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#挂载关系"><span class="nav-number">4.1.</span> <span class="nav-text">挂载关系</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#namespace-API"><span class="nav-number">2.</span> <span class="nav-text">namespace API</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#clone"><span class="nav-number">2.1.</span> <span class="nav-text">clone()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#setns"><span class="nav-number">2.2.</span> <span class="nav-text">setns()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#unshare"><span class="nav-number">2.3.</span> <span class="nav-text">unshare()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PID-namespace"><span class="nav-number">3.</span> <span class="nav-text">PID namespace</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#init进程"><span class="nav-number">3.1.</span> <span class="nav-text">init进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#信号屏蔽"><span class="nav-number">3.2.</span> <span class="nav-text">信号屏蔽</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mount-namespace"><span class="nav-number">4.</span> <span class="nav-text">mount namespace</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#挂载关系"><span class="nav-number">4.1.</span> <span class="nav-text">挂载关系</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#network-namespace"><span class="nav-number">5.</span> <span class="nav-text">network namespace</span></a></li></ol></div>
             
 
           </div>
