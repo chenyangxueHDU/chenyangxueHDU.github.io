@@ -367,7 +367,7 @@
 <li>ferrzer：挂起或恢复任务</li>
 <li>blkio：为块设备设定输入、输出限制</li>
 </ul>
-<h2 id="查看子系统"><a href="#查看子系统" class="headerlink" title="查看子系统"></a>查看子系统</h2><p>cgroup的实现是文件系统，所以需要mount。<br><img src="/2017/12/03/《Docker-容器与容器云》读书笔记-cgroups资源限制/1.PNG" alt=""><br>查看cpu子系统下的控制组<br><img src="/2017/12/03/《Docker-容器与容器云》读书笔记-cgroups资源限制/2.PNG" alt=""><br>看到Docker会在每个子系统的控制组目录下创建一个名为docker的控制组，并且在docker控制组里再为每个容器创建一个以容器ID为名称的容器控制组，容器中所有的进程PID都会写入该控制组的tasks文件中。<br><img src="/2017/12/03/《Docker-容器与容器云》读书笔记-cgroups资源限制/3.PNG" alt=""></p>
+<h2 id="查看子系统"><a href="#查看子系统" class="headerlink" title="查看子系统"></a>查看子系统</h2><p>cgroup的实现是文件系统，所以需要mount。<br><img src="/2017/12/03/《Docker-容器与容器云》读书笔记-cgroups资源限制/1.PNG" alt=""><br>查看cpu子系统下的控制组<br><img src="/2017/12/03/《Docker-容器与容器云》读书笔记-cgroups资源限制/2.PNG" alt=""><br>看到Docker会在每个子系统的控制组目录下创建一个名为docker的控制组，并且在docker控制组里再为每个容器创建一个以容器ID为名称的容器控制组，容器中所有的进程PID都会写入该控制组的tasks文件中。<br><img src="/2017/12/03/《Docker-容器与容器云》读书笔记-cgroups资源限制/3.PNG" alt=""><br>以资源开头（cpu.）的文件都是限制这个cgroup的下任务的配置文件；tasks文件保存该cgroup任务的ID。</p>
 
           
         
