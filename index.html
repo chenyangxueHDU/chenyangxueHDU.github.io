@@ -252,6 +252,174 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/13/《Docker-容器与容器云》读书笔记-docker网络基础/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Chen Yangxue">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="chenyangxue">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/13/《Docker-容器与容器云》读书笔记-docker网络基础/" itemprop="url">《Docker-容器与容器云》读书笔记-docker网络基础</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-13T20:37:11+08:00">
+                2017-12-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Docker/" itemprop="url" rel="index">
+                    <span itemprop="name">Docker</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>在Docker中，网络已经被抽离成一个单独的库——libnetwork，Dokcer daemon通过调用libnetwork库的API来管理容器网络。为了标准化网络驱动开发和支持多种网络驱动，Docker在libnetwork中使用CNM（Container Network Model）定义容器的虚拟化网络模型。</p>
+<h2 id="CNM"><a href="#CNM" class="headerlink" title="CNM"></a>CNM</h2><p>在CNM中主要有三种组件——Sandbox(沙盒)、Endpoint(端点)以及Network（网络）。</p>
+<p><img src="/2017/12/13/《Docker-容器与容器云》读书笔记-docker网络基础/cnm-model.jpg" alt=""></p>
+<p><strong>Sandbox</strong></p>
+<p>一个沙盒包括了一个容器网络栈的信息。沙盒可以对容器的接口、路由和DNS设置进行管理。一个沙盒可以有 <em>多个</em> 网络的 <em>许多</em> 端点。</p>
+<p><strong>Network</strong></p>
+<p>网络是一组可以直接互相连通的端点。网络可以有多种实现：<code>bridge</code>, <code>host</code>, <code>ipvlan</code>, <code>macvlan</code>, <code>null</code>, <code>overlay</code>, <code>remote</code>, <code>windows</code>。</p>
+<p><strong>Endpoint</strong></p>
+<p>端点代表一个沙盒与一个网络之间的逻辑链接。</p>
+<h2 id="Bridge"><a href="#Bridge" class="headerlink" title="Bridge"></a>Bridge</h2><p>Bridge是Docker网络的默认实现方式。</p>
+<h3 id="docker0"><a href="#docker0" class="headerlink" title="docker0"></a>docker0</h3><p>安装完Docker之后，宿主机上就会多一个名为docker0的网卡，IP为172.17.0.1。</p>
+<p><img src="/2017/12/13/《Docker-容器与容器云》读书笔记-docker网络基础/1.PNG" alt=""></p>
+<p>运行一个容器，并进入容器里面可以看到绑定了一张网卡，IP为172.17.0.2；同时宿主机上多了一个名为veth6a8174b的网卡。之前已经学过两个network namespace之间可以通过veth pair通信，即veth pair的一端是docker0，另一端就是容器中的eth0。</p>
+<p>拓扑结构如下：<br><img src="/2017/12/13/《Docker-容器与容器云》读书笔记-docker网络基础/2.PNG" alt=""></p>
+<h3 id="容器间通信"><a href="#容器间通信" class="headerlink" title="容器间通信"></a>容器间通信</h3><p>同一台宿主机上的不同容器默认都连在docker0网桥上，所以他们属于一个子网，所以容器之间具备了相互通信的基本条件。其次，Docker daemon在filter表中的FORWARD链中增加了一条规则：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-A FORWARD -i docker0 -o docker0 -j ACCEPT</span><br></pre></td></tr></table></figure>
+<p>这条规则表明数据包从docker0转发到docker0是ACCEPT的规则，所以容器之间可以通信。</p>
+<h3 id="容器与外部通信"><a href="#容器与外部通信" class="headerlink" title="容器与外部通信"></a>容器与外部通信</h3><p>容器与外部通信就涉及到网卡之间的转发，Docker daemon在filter表中的FORWARD链中增加了一条规则：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-A FORWARD -i docker0 ! -o docker0 -j ACCEPT</span><br></pre></td></tr></table></figure>
+<p>这条规则表明数据包从docker0转发到非docker0网卡是ACCEPT的规则，所以网卡之间可以转发。其次，Docker daemon还在nat表中的POSTROUTING链中增加了一条规则：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-A POSTROUTING -s 172.17.0.0/16 ! -o docker0 -j MASQUERADE</span><br></pre></td></tr></table></figure>
+<p>这条规则表明将发往非docker0网卡的，源地址为172.17.0.0/16的数据包做SNAT，这样从外界看来数据包都是从宿主机上发出的，对外隐藏了容器。</p>
+<h3 id="外部访问容器"><a href="#外部访问容器" class="headerlink" title="外部访问容器"></a>外部访问容器</h3><p>外部访问宿主机内部容器提供的服务需要做端口映射，底层还是通过iptables来实现的，Docker daemon在nat表中的DOCKER链（DOCKER链属于PREROUTING链）中增加了一条规则：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-A DOCKER ! -i docker0 -p tcp -m tcp --dport 10000 -j DNAT --to-destination 172.17.0.4:6379</span><br></pre></td></tr></table></figure>
+<p>这条规则表明将从非docker0网卡发出的，目的地端口10000的数据包做DNAT，并且发送到172.17.0.4:6379;其次，Docker daemon还在filter表中的DOCKER链（DOCKER链属于FORWARD链）链中增加了一条规则：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-A DOCKER -d 172.17.0.4/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 6379 -j ACCEPT</span><br></pre></td></tr></table></figure>
+<p>这条规则表明数据包目的地是172.17.0.4/32的，从非docker0网卡转发到docker0网卡，目的地端口6379是ACCEPT规则。所以外界可以通过端口映射访问容器服务。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/03/《Docker-容器与容器云》读书笔记-cgroups资源限制/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -647,7 +815,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -664,6 +832,15 @@
               </div>
             
 
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
             
 
           </nav>
