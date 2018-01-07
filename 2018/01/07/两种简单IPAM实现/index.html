@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="引言最近项目中需要管理IP地址，所以借鉴了Docker的相关实现。 IPAM在Docker CNM容器网络模型中，容器的IP地址通过IPAM(IP Address Management) driver进行统一管理。">
+<meta name="description" content="引言最近项目中需要管理IP地址，所以借鉴了Docker的相关实现。 IPAM在Docker CNM容器网络模型中，容器的IP地址通过IPAM(IP Address Management) driver进行统一管理。在IPAM中，通过IP地址池保存具体的IP地址。分配同一个地址池的IP地址时，我们只需要关注序数，通过序数">
 <meta name="keywords" content="网络">
 <meta property="og:type" content="article">
 <meta property="og:title" content="两种简单IPAM实现">
 <meta property="og:url" content="http://yoursite.com/2018/01/07/两种简单IPAM实现/index.html">
 <meta property="og:site_name" content="chenyangxue">
-<meta property="og:description" content="引言最近项目中需要管理IP地址，所以借鉴了Docker的相关实现。 IPAM在Docker CNM容器网络模型中，容器的IP地址通过IPAM(IP Address Management) driver进行统一管理。">
+<meta property="og:description" content="引言最近项目中需要管理IP地址，所以借鉴了Docker的相关实现。 IPAM在Docker CNM容器网络模型中，容器的IP地址通过IPAM(IP Address Management) driver进行统一管理。在IPAM中，通过IP地址池保存具体的IP地址。分配同一个地址池的IP地址时，我们只需要关注序数，通过序数和地址池信息就可以生产正确的IP地址。所以问题就转换成如何在高并发情况下管理不同">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-01-07T13:09:08.139Z">
+<meta property="og:updated_time" content="2018-01-07T13:40:16.615Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="两种简单IPAM实现">
-<meta name="twitter:description" content="引言最近项目中需要管理IP地址，所以借鉴了Docker的相关实现。 IPAM在Docker CNM容器网络模型中，容器的IP地址通过IPAM(IP Address Management) driver进行统一管理。">
+<meta name="twitter:description" content="引言最近项目中需要管理IP地址，所以借鉴了Docker的相关实现。 IPAM在Docker CNM容器网络模型中，容器的IP地址通过IPAM(IP Address Management) driver进行统一管理。在IPAM中，通过IP地址池保存具体的IP地址。分配同一个地址池的IP地址时，我们只需要关注序数，通过序数和地址池信息就可以生产正确的IP地址。所以问题就转换成如何在高并发情况下管理不同">
 
 
 
@@ -343,8 +343,9 @@
 
       
         <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>最近项目中需要管理IP地址，所以借鉴了Docker的相关实现。</p>
-<h2 id="IPAM"><a href="#IPAM" class="headerlink" title="IPAM"></a>IPAM</h2><p>在Docker CNM容器网络模型中，容器的IP地址通过IPAM(IP Address Management) driver进行统一管理。</p>
-
+<h2 id="IPAM"><a href="#IPAM" class="headerlink" title="IPAM"></a>IPAM</h2><p>在Docker CNM容器网络模型中，容器的IP地址通过IPAM(IP Address Management) driver进行统一管理。在IPAM中，通过IP地址池保存具体的IP地址。<br>分配同一个地址池的IP地址时，我们只需要关注序数，通过序数和地址池信息就可以生产正确的IP地址。所以问题就转换成如何在高并发情况下管理不同IP地址池的序数。</p>
+<h2 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h2><p>Redis是单线程模型，并且内置了多种数据结构，利用这些结构可以很方便的实现IPAM，下面介绍两种实现方式。</p>
+<h3 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a>Queue</h3><h3 id="Bitmaps"><a href="#Bitmaps" class="headerlink" title="Bitmaps"></a>Bitmaps</h3>
       
     </div>
     
@@ -516,7 +517,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IPAM"><span class="nav-number">2.</span> <span class="nav-text">IPAM</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IPAM"><span class="nav-number">2.</span> <span class="nav-text">IPAM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis"><span class="nav-number">3.</span> <span class="nav-text">Redis</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Queue"><span class="nav-number">3.1.</span> <span class="nav-text">Queue</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bitmaps"><span class="nav-number">3.2.</span> <span class="nav-text">Bitmaps</span></a></li></ol></li></ol></div>
             
 
           </div>
